@@ -1,0 +1,127 @@
+* {
+  font-family: Arial, sans-serif;
+}
+
+body {
+  font-size: 100%;
+  max-width: 1400px;
+  /*height: 100%;*/
+  margin: auto; /*Use margin: auto;, to horizontally center an element within its container.*/
+}
+
+  .app-bar {
+    width: 100%;
+    height: 30px;
+    padding: 10; /*if instead margin is set, backgr. color doesn't apply*/
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 2; /*Stay above the container *and* navbar. May be superfluous?*/
+    background-color: #FFFFFF;
+  }
+
+  .app-bar button {
+    height: inherit; /* from app-bar */
+    background-image: none;
+    background-color: transparent;
+    border: none;
+    padding: 0;
+  }
+
+  .app-bar button img {
+    height: inherit; /* from app-bar */
+  }
+
+  .title {
+    padding-top: 50px; /*XXX must be equal to app-bar height+padding!!!*/
+    padding-bottom: 20px;
+  }
+
+  /* The outermost div is of class "container". "display: block" is default in chrome, don't know what this is good for.*/
+  .container {
+    display: block;
+  }
+
+    .navdrawer {
+      /*position: absolute;*//*positioned absolute, relative to the nearest positioned ancestor, which is, I guess, the document body?*//*Tried "width: 250px" instead of min/max, but then it gets squeezed if @media min-width is exceeded only slightly*/
+      position: fixed;
+      top: 50px;/*must be equal to app-bar height PLUS padding!*/
+      left: 0;
+      bottom: 0;
+      min-width: 250px;
+      max-width: 250px;
+      /*height: 100%;*/
+      /*backface-visibility: hidden;*/
+      /*transition: transform 0.4s ease-out;*/
+      z-index: 1;
+      background-color: #E0E0E0;
+      /*transition: transform 0.4s ease-out;*/
+      transform: translate(-250px,0);
+      overflow-y: auto;/*For long link lists. If overflow is clipped, a scroll-bar should be added to see the rest of the content*/
+    }
+
+    .navdrawer.open {
+      transform: translate(0px,0);
+    }
+
+    .navdrawer ul {
+      margin: 0;
+      padding: 0;
+      list-style-type: none;
+    }
+
+    .navdrawer ul li a {
+      display: block; /*always a column...don't know if necessary?*/
+      /*height: 60px;*/
+      padding: 0 20px; /*shorthand for: top and bottom: 0; left and right: 20px*/
+      line-height: 60px;
+      text-decoration: none;
+      color: black;
+      /*-webkit-transition: background-color 0.2s ease-out;*/
+      /*transition: background-color 0.2s ease-out;*/
+    }
+
+    h1 {
+      font-size: 3em; /* 48px/16=3 */
+      font-weight: 200;
+      /* 1=1em is equal to the current font size*/
+      line-height: 1.2;
+      /*max-width: 52em; */
+      text-align: center;
+      margin: 0;
+    }
+
+    /*.mobile-hidden {
+      display: none;
+    }*/
+
+  @media (min-width: 700px) {
+    /* If the screen is wider then 500px, use Flexbox */
+    .app-bar {
+      display: none
+    }
+    .container {
+      display: flex;
+      flex-flow: row nowrap;
+    }
+    .navdrawer {
+      position: relative;
+      top: 0;
+      /* transition: none 0s ease-out; */
+      transform: translate(0,0);
+    }
+
+    .title {
+      padding-top: 20px; /*app-bar moves to the left*/
+    }
+
+  }
+
+
+
+
+
+
+p {
+  font-size: 60px;
+}

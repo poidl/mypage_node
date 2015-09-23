@@ -1,0 +1,23 @@
+{
+  "name": "poidl.github.io",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/poidl/poidl.github.io.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/poidl/poidl.github.io/issues"
+  },
+  "homepage": "https://github.com/poidl/poidl.github.io#readme",
+  "devDependencies": {
+    "browser-sync": "^2.8.2",
+    "gulp": "^3.9.0"
+  }
+}

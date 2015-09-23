@@ -1,1 +1,71 @@
-Hello World
+</html>
+<head>
+<meta name=viewport content="width=device-width, initial-scale=1">
+<link rel="stylesheet" type="text/css" href="mystyle.css">
+</head>
+  <body>
+    <header class="app-bar">
+      <button class="menu">
+        <img src="./pics/menu.png">
+      </button>
+    </header>
+    <div class="title" style="outline-style: solid; outline-width: 1px;">
+      <h1>
+        Stefan Riha
+        <!-- <img src="pics/foto.jpg" alt="myfoto" style="float:right;width:500px;height:80px;vertical-align:middle;"> -->
+      </h1>
+    </div>
+    <div class="container" role="main" style="outline-style: solid; outline-width: 1px;" >
+        <nav class="navdrawer" id="leftDrawer" style="outline-style: solid; outline-width: 1px;">
+          <ul>
+            <li><a href="#">Item 1</a></li>
+            <li><a href="#">Item 2</a></li>
+            <li><a href="#">Item 3</a></li>
+            <li><a href="#">Item 4</a></li>
+            <li><a href="#">Item 5</a></li>
+            <li><a href="#">Item 6</a></li>
+            <li><a href="#">Item 7</a></li>
+            <li><a href="#">Item 8</a></li>
+            <li><a href="#">Item 9</a></li>
+            <li><a href="#">Item 10</a></li>
+            <li><a href="#">Item 11</a></li>
+            <li><a href="#">Item 12</a></li>
+            <li><a href="#">Item 13</a></li>
+            <li><a href="#">Item 14</a></li>
+            <li><a href="#">Item 15</a></li>
+          </ul>
+        </nav>
+        <div class="mainwindow" id="mainPanel">
+          Hallo
+          <p>asfsafsafs asdfas asdfasdf asdfasfadfas asdfasfasf asdfasd</p>
+          <p>asfsafsafs asdfas asdfasdf asdfasfadfas asdfasfasf asdfasd</p>
+          <p>asfsafsafs asdfas asdfasdf asdfasfadfas asdfasfasf asdfasd</p>
+          <p>asfsafsafs asdfas asdfasdf asdfasfadfas asdfasfasf asdfasd</p>
+          <p>asfsafsafs asdfas asdfasdf asdfasfadfas asdfasfasf asdfasd</p>
+        </div>
+    </div>
+  <!-- <h1>
+  Stefan Riha
+  <img src="pics/noosa.png" alt="myfoto" style="float:left;width:500px;height:80px;vertical-align:middle;">
+  </h1> -->
+
+
+    <script>
+      var navdrawerContainer = document.querySelector('.navdrawer');
+      var appbarElement = document.querySelector('.app-bar');
+
+      var menuBtn = document.querySelector('.menu');
+      menuBtn.addEventListener('click', function() {
+        var isOpen = navdrawerContainer.classList.contains('open');
+        if(isOpen) {
+          appbarElement.classList.remove('open');
+          navdrawerContainer.classList.remove('open');
+        } else {
+          appbarElement.classList.add('open');
+          navdrawerContainer.classList.add('open');
+        }
+      }, true);
+    </script>
+
+  </body>
+</html>
