@@ -4,7 +4,7 @@
 
 body {
   font-size: 100%;
-  max-width: 1400px;
+  max-width: 1000px;
   /*height: 100%;*/
   margin: auto; /*Use margin: auto;, to horizontally center an element within its container.*/
 }
@@ -98,9 +98,9 @@ body {
 
     .navdrawer ul li a {
       display: block; /*always a column...don't know if necessary?*/
-      /*height: 60px;*/
+      height: 60px;
       padding: 0 20px; /*shorthand for: top and bottom: 0; left and right: 20px*/
-      /*line-height: 60px;*/
+      line-height: 60px;
       text-decoration: none;
       color: black;
       /*-webkit-transition: background-color 0.2s ease-out;*/
@@ -117,9 +117,17 @@ body {
       margin: 0;
     }
 
-    /*.mainwindow p {
-      font-size: 60px;
-    }*/
+    .mainwindow {
+      /*font-size: 60px;*/
+      padding: 0 30px;
+    }
+
+    .mainwindow a {
+      /*font-size: 60px;*/
+      color: black;
+    }
+
+
 
     /*.mobile-hidden {
       display: none;
