@@ -4,7 +4,7 @@
 
 body {
   font-size: 100%;
-  max-width: 1000px;
+  max-width: 1300px;
   /*height: 100%;*/
   margin: auto; /*Use margin: auto;, to horizontally center an element within its container.*/
 }
@@ -50,6 +50,7 @@ body {
   }
 
   .title {
+    /*background-color: blue;*/
     padding-top: 20px;
     padding-bottom: 20px;
     display: none;
@@ -66,21 +67,24 @@ body {
       position: fixed;
       top: 70px;/*must be equal to app-bar height PLUS padding!*/
       left: 0;
-      min-width: 250px;
-      max-width: 250px;
+      /*min-width: 250px;*/
+      /*max-width: 250px;*/
+      width: 100%;
       max-height: 75vh;
+      display: none;
       /*height: 100%;*/
       /*backface-visibility: hidden;*/
       /*transition: transform 0.4s ease-out;*/
       z-index: 1;
       background-color: #E0E0E0;
       /*transition: transform 0.4s ease-out;*/
-      transform: translate(-250px,0);
+      /*transform: translate(-250px,0);*/
       overflow-y: auto;/*For long link lists. If overflow is clipped, a scroll-bar should be added to see the rest of the content*/
     }
 
     .navdrawer.open {
-      transform: translate(0px,0);
+      /*transform: translate(0px,0);*/
+      display: block;
     }
 
     .navdrawer ul {
@@ -101,18 +105,23 @@ body {
     }
 
     h1 {
-      font-size: 3em; /* 48px/16=3 */
-      font-weight: 200;
+      font-size: 2.5em; /* 48px/16=3 */
+      font-weight: 100;
       /* 1=1em is equal to the current font size*/
       line-height: 1.2;
       /*max-width: 52em; */
       text-align: center;
-      margin: 0;
+      margin: 30;
     }
 
     .mainwindow {
       font-size: 1.2em;
-      padding: 0 20px;
+      /*padding: 0 50px;*/
+      margin: 0  50px;
+    }
+
+    .mainwindow p:first-child {
+      margin-top: 0; /* vertically align first line with upper edge of navdrawer box */
     }
 
     .mainwindow a {
@@ -140,8 +149,15 @@ body {
       position: relative;
       top: 0;
       /* transition: none 0s ease-out; */
-      transform: translate(0,0);
+      /*transform: translate(0,0);*/
+      display: block;
+      min-width: 250px;
+      max-width: 250px;
       max-height: none;
+    }
+
+    .mainwindow {
+      font-size: 1em;
     }
 
     .title {
