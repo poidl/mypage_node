@@ -117,11 +117,7 @@ body {
     .mainwindow {
       font-size: 1.2em;
       /*padding: 0 50px;*/
-      margin: 0  50px;
-    }
-
-    .mainwindow p:first-child {
-      margin-top: 0; /* vertically align first line with upper edge of navdrawer box */
+      margin: 0 20px;
     }
 
     .mainwindow a {
@@ -158,6 +154,11 @@ body {
 
     .mainwindow {
       font-size: 1em;
+      margin: 0  50px;
+    }
+
+    .mainwindow p:first-child {
+      margin-top: 0; /* vertically align first line with upper edge of navdrawer box */
     }
 
     .title {
