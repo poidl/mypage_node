@@ -114,16 +114,25 @@ body {
       margin: 30;
     }
 
+    /*h1 is already styled above*/
+    h2 h3 h4 h5 h6 {
+      font-weight: 100;
+    }
+
     .mainwindow {
       font-size: 1.2em;
       /*padding: 0 50px;*/
       margin: 0 12px;
+      /*set overflow to scroll, so the app-bar button doesn't disappear on the right-hand side if mainwindow is overflowing*/
+      overflow-x: scroll;
     }
 
     .mainwindow a {
       /*font-size: 60px;*/
       color: black;
     }
+
+
 
 
 
@@ -157,7 +166,7 @@ body {
       margin: 0  50px;
     }
 
-    .mainwindow p:first-child {
+    .mainwindow :first-child {
       margin-top: 0; /* vertically align first line with upper edge of navdrawer box */
     }
 
