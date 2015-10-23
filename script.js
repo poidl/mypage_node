@@ -1,5 +1,5 @@
 
-// // from http://diveintohtml5.info/history.html
+/// // from http://diveintohtml5.info/history.html
 // function setupHistoryClicks() {
 //   addClicker(document.getElementById("home"));
 //   addClicker(document.getElementById("skills"));
