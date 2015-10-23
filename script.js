@@ -1,22 +1,37 @@
 
-// from http://diveintohtml5.info/history.html
-function setupHistoryClicks() {
-  addClicker(document.getElementById("home"));
-  addClicker(document.getElementById("skills"));
-}
+// // from http://diveintohtml5.info/history.html
+// function setupHistoryClicks() {
+//   addClicker(document.getElementById("home"));
+//   addClicker(document.getElementById("skills"));
+// }
+//
+// function addClicker(link) {
+//   link.addEventListener("click", function(e) {
+// //     debugger
+//     swapMainwindow(link.href);
+//     //console.log("pushState with: " + link.href);
+//     history.pushState(null, null, link.href);
+//     e.preventDefault();
+//   }, false);
+// }
 
-function addClicker(link) {
-  link.addEventListener("click", function(e) {
-//     debugger
-    swapMainwindow(link.href);
-    history.pushState(null, null, link.href);
+var container = document.getElementById('leftDrawer');
+container.addEventListener('click', navlink_clicked, false);
+
+function navlink_clicked (e) {
+  if (e.target != e.currentTarget) {
     e.preventDefault();
-  }, false);
+    swapMainwindow(e.target.href);
+    //console.log("pushState with: " + e.target.href);
+    history.pushState(null, null, e.target.href);
+  }
+  e.stopPropagation();
 }
 
 
 function swapMainwindow(href) {
   var xhttp = new XMLHttpRequest();
+  //console.log("swapMainwindow: "+href)
   xhttp.onreadystatechange = function() {
     if (xhttp.readyState == 4 && xhttp.status == 200) {
       document.getElementById("mainPanel").innerHTML = xhttp.responseText;
@@ -25,16 +40,20 @@ function swapMainwindow(href) {
   // href is the url we want to appear on the address bar. e.g. "hoitaus.com/skills.html". but skills.html is in directory "content"
   xhttp.open("GET", "content/" + href.split('/').pop(), true); // true: asynchronously
   xhttp.send();
-  setupHistoryClicks();
+  //setupHistoryClicks();
 }
 
 window.onload = function() {
   swapMainwindow(location.href + "intro.html");
+  //console.log("pushState with: " + location.href +"intro.html");
   history.pushState(null, null, location.href + "intro.html");
-  setupHistoryClicks();
-  window.addEventListener("popstate", function(e) {
-      console.log('popstate fired!');
-      swapMainwindow(location.href);}, false);
+  window.addEventListener("popstate", doit, false);
+
+  function doit(e) {
+    //console.log('popstate fired!');
+    //console.log("location: " + document.location + ", state: " + JSON.stringify(event.state));
+    swapMainwindow(location.href);
+  }
 }
 
 // function loadDoc(filename) {
