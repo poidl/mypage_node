@@ -1,49 +1,36 @@
-<!-- TODO: does navigation work if javascript is disabled? browser history? pushState popstate? -->
+<html id="intro">
 
-<html>
-<head>
-<meta name=viewport content="width=device-width, initial-scale=1">
-<link rel="stylesheet" type="text/css" href="mystyle.css">
-</head>
-  <body>
-    <header class="app-bar">
-      <!-- clickabel bartitle -> back to home -->
-      <a href="#"  onclick="loadDoc('content/intro.html')" style="color:black;  text-decoration:none">
-        <span class="bartitle"> Stefan Riha </span>
-      </a>
-        <button class="menu">
-          <img src="./pics/menu.png"></img>
-        </button>
-      </div>
-    </header>
+<script>
+window.onload = function() {
+  getFrame();
+  var jsElm = document.createElement("script");
+  jsElm.type = "application/javascript";
+  jsElm.src = "./script.js";
+  document.body.appendChild(jsElm);
+  // TODO: timeout hack. use
+  // jsElem.onload
+  setTimeout(function () {
+    swapMainwindow(location.href + "intro.html");
+    history.pushState(null, null, location.href + "intro.html");
+    window.addEventListener("popstate", doit, false);
+    function doit(e) {
+      swapMainwindow(location.href);
+    }
+  }, 1000);
+}
 
- <!-- style="outline-style: solid; outline-width: 1px;" -->
-    <header class="title">
-      <!-- clickabel bartitle -> back to home -->
-      <a href="#"  onclick="loadDoc('content/intro.html')" style="color:black;  text-decoration:none">
-        <h1>
-          Welcome to my homepage!
-          <!-- <img src="pics/foto.jpg" alt="myfoto" style="float:right;width:500px;height:80px;vertical-align:middle;"> -->
-        </h1>
-      </a>
-    </header>
-    <div class="container" role="main">
-        <nav class="navdrawer" id="leftDrawer">
-          <ul>
-            <!-- <li><a href="#" onclick="loadnav('content/intro.html')">Home</a></li>
-            <li><a href="#"sss onclick="loadnav('content/skills.html')">Skills</a></li> -->
-            <li><a id="home" href="intro.html">Home</a></li>
-            <li><a id="skills" href="skills.html">Skills</a></li>
-            <li><a href="#">Programming</a></li>
-            <li><a href="#">Publications</a></li>
-            <li><a href="#">CV</a></li>
-            <li><a href="#">Contact</a></li>
-          </ul>
-        </nav>
-        <div class="mainwindow" id="mainPanel">
+function getFrame() {
+  var xhttp = new XMLHttpRequest();
+  //console.log("swapMainwindow: "+href)
+  xhttp.onreadystatechange = function() {
+    if (xhttp.readyState == 4 && xhttp.status == 200) {
+      document.getElementById("intro").innerHTML = xhttp.responseText;
+    }
+  }
+  xhttp.open("GET", "frame.html", true); // true: asynchronously
+  xhttp.send();
+  //setupHistoryClicks();
+}
 
-        </div>
-    </div>
-    <script src="script.js"></script>
-  </body>
+</script>
 </html>

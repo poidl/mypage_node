@@ -21,9 +21,11 @@ container.addEventListener('click', navlink_clicked, false);
 function navlink_clicked (e) {
   if (e.target != e.currentTarget) {
     e.preventDefault();
-    swapMainwindow(e.target.href);
-    //console.log("pushState with: " + e.target.href);
-    history.pushState(null, null, e.target.href);
+    if (e.target.href != location.href) {
+      swapMainwindow(e.target.href);
+      //console.log("pushState with: " + e.target.href);
+      history.pushState(null, null, e.target.href);
+    }
   }
   e.stopPropagation();
 }
@@ -43,18 +45,6 @@ function swapMainwindow(href) {
   //setupHistoryClicks();
 }
 
-window.onload = function() {
-  swapMainwindow(location.href + "intro.html");
-  //console.log("pushState with: " + location.href +"intro.html");
-  history.pushState(null, null, location.href + "intro.html");
-  window.addEventListener("popstate", doit, false);
-
-  function doit(e) {
-    //console.log('popstate fired!');
-    //console.log("location: " + document.location + ", state: " + JSON.stringify(event.state));
-    swapMainwindow(location.href);
-  }
-}
 
 // function loadDoc(filename) {
 //   var xhttp = new XMLHttpRequest();
