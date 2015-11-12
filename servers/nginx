@@ -1,0 +1,12 @@
+#!/usr/bin/bash
+
+if [ "$1" == "start" ]; then
+   nginx -c ~/programs/poidl.github.io/servers/nginx.conf
+elif [ "$1" == "stop" ]; then
+   kill -QUIT $( cat ~/programs/poidl.github.io/servers/tmp/nginx.pid )
+else
+   echo "need argument \"start\" or \"stop\""
+fi
+
+   
+    
