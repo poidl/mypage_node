@@ -1,0 +1,11 @@
+Route standard GETs /withFrame/* to /withFrame/index.html, which contains javascript code to generate the full page.
+Pass through ajax GETS to /withFrame/* without routing
+
+/withFrame/
+  intro/home
+  skills
+  programming
+  publications
+  cv
+  contact
+  index.html
