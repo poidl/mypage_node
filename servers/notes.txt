@@ -1,11 +1,36 @@
-Route standard GETs /withFrame/* to /withFrame/index.html, which contains javascript code to generate the full page.
-Pass through ajax GETS to /withFrame/* without routing
-
 /withFrame/
-  intro/home
+  intro
   skills
   programming
   publications
   cv
   contact
   index.html
+
+SERVER:
+framed = ["/","intro","skills","programming",etc.]
+unframed = ["/rotatingTable" etc.]
+If path in framed
+  frame(path)
+elseif "withFrame" in path and  [(cut "withFrame" from path) in framed]:
+  if Ajax:
+    staticserve path + ".html"
+  else
+    path = cut "withFrame" from path
+    frame(path)
+elseif path in unframed
+  staticserve path + ".html"
+
+
+function frame(path) {
+  path = /withFrame + path + .html
+  GET path
+}
+
+Use case:
+*) GET / -> frame(intro) (Address bar: /intro)
+*) GET /skills -> frame(skills)
+*) GET /withFrame/skills.html
+    *) Case Noajax: -> frame(skills.html) (Address bar: /skills)
+    *) Case Ajax: -> GET /withFrame/skills.html
+*) GET /other.html -> /other.html
