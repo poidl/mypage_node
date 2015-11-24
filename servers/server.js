@@ -8,29 +8,45 @@ var fileServer = ecstatic({root: "/"});
 //
 // }
 
-var framed = ["/","/intro","/skills","/programming", "/publications", "/cv", "/contact"];
-var unframed = ["/rotatingtable"];
+var mymap = {
+  framed : [
+    // framed
+    {prettyurl:"/", resource:"/framed/intro.html"},
+    {prettyurl:"/intro", resource:"/framed/intro.html"},
+    {prettyurl:"/skills", resource:"/framed/skills.html"},
+    {prettyurl:"/programming", resource:"/framed/programming.html"},
+    {prettyurl:"/publications", resource:"/framed/publications.html"},
+    {prettyurl:"/cv", resource:"/framed/cv.html"}
+  ],
+  unframed : [
+    {prettyurl:"/rotatingtable", resource:"/rotatingtable.html"}
+  ],
+  idx: idx
+}
 
-var issubdirrequest = function(path) {
-  urlregex = /^\/withFrame\/([^\/]+)$/;
-  var repl = urlregex.exec(path);
-  // is the part after subdirectory in framed?
-  if (framed.indexOf( "/"+repl.slice(1) ) > -1)
-    return repl
-  else
-    return false
+// operates on map
+function idx(url,arrayname,urltype) {
+  for (i = 0; i < this[arrayname].length; i++) {
+    if (this[arrayname][i][urltype] == url) {
+      return this[arrayname][i]
+    }
+  }
+  return false
 }
 
 http.createServer(function(request, response) {
   var path = require("url").parse(request.url).pathname;
-
-  if (framed.indexOf(path) > -1) {
+  // requested is a framed page via pretty url
+  if (obj=mymap.idx(path, "framed", "prettyurl")) {
     response.write("<h1>framed</h1>"+
     "<p>request.url <code>" + request.url + "</p>"+
-    "<p>path  <code>" + path + "</p>");
+    "<p>path  <code>" + path + "</p>"+
+    "<p>obj.url  <code>" + obj.prettyurl + "</p>"+
+    "<p>obj.resource  <code>" + obj.resource + "</p>");
     response.end();
   }
-  else if (bla = issubdirrequest(path)) {
+  // requested is a framed page directly via resource
+  else if (obj=mymap.idx(path, "framed", "resource")) {
     // AJAX - don't rebuild the frame
     // if (request.headers["x-requested-with"] == 'XMLHttpRequest') {
     //   fileServer(request, response);
@@ -39,13 +55,14 @@ http.createServer(function(request, response) {
     // }
     response.write("<h1>SUBDIRREQUEST</h1>"+
     "<p>request.url <code>" + request.url + "</p>"+
-    "<p>path  <code>" + path + "</p>");
+    "<p>path  <code>" + path + "</p>"+
+    "<p>obj.url  <code>" + obj.prettyurl + "</p>"+
+    "<p>obj.resource  <code>" + obj.resource + "</p>");
     response.end();
   }
   else // 404?
     fileServer(request, response);
-  // if (!router.resolve(request, response))
-    // fileServer(request, response);
+
 }).listen(8080);
 
 
