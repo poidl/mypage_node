@@ -2,7 +2,7 @@ var http = require("http");
 
 var ecstatic = require("ecstatic");
 
-var fileServer = ecstatic({root: "/"});
+var fileServer = ecstatic({root: "../"});
 
 // var servestatic = function(path) {
 //
@@ -38,27 +38,30 @@ http.createServer(function(request, response) {
   var path = require("url").parse(request.url).pathname;
   // requested is a framed page via pretty url
   if (obj=mymap.idx(path, "framed", "prettyurl")) {
-    response.write("<h1>framed</h1>"+
-    "<p>request.url <code>" + request.url + "</p>"+
-    "<p>path  <code>" + path + "</p>"+
-    "<p>obj.url  <code>" + obj.prettyurl + "</p>"+
-    "<p>obj.resource  <code>" + obj.resource + "</p>");
-    response.end();
-  }
-  // requested is a framed page directly via resource
-  else if (obj=mymap.idx(path, "framed", "resource")) {
-    // AJAX - don't rebuild the frame
+    //AJAX - don't rebuild the frame
     // if (request.headers["x-requested-with"] == 'XMLHttpRequest') {
     //   fileServer(request, response);
     // } else {
-    //
+    // console.log("requested is a framed page directly via resource")
+        request.url = "/framed/frame.html";
+        fileServer(request, response);    //AJAX - don't rebuild the frame
+    // if (request.headers["x-requested-with"] == 'XMLHttpRequest') {
+    //   fileServer(request, response);
+    // } else {
+    console.log("requested is a framed page directly via resource")
+        request.url = "/framed/frame.html";
+        fileServer(request, response);
+  }
+  // requested is a framed page directly via resource
+  else if (obj=mymap.idx(path, "framed", "resource")) {
+
     // }
-    response.write("<h1>SUBDIRREQUEST</h1>"+
-    "<p>request.url <code>" + request.url + "</p>"+
-    "<p>path  <code>" + path + "</p>"+
-    "<p>obj.url  <code>" + obj.prettyurl + "</p>"+
-    "<p>obj.resource  <code>" + obj.resource + "</p>");
-    response.end();
+    // response.write("<h1>SUBDIRREQUEST</h1>"+
+    // "<p>request.url <code>" + request.url + "</p>"+
+    // "<p>path  <code>" + path + "</p>"+
+    // "<p>obj.url  <code>" + obj.prettyurl + "</p>"+
+    // "<p>obj.resource  <code>" + obj.resource + "</p>");
+    // response.end();
   }
   else // 404?
     fileServer(request, response);
