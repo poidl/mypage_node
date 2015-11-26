@@ -1,25 +1,20 @@
+// some of this is copied from http://eloquentjavascript.net/20_node.html
+
 var http = require("http");
-
-var ecstatic = require("ecstatic");
-
-var fileServer = ecstatic({root: "../"});
-
-// var servestatic = function(path) {
-//
-// }
+var fs = require("fs")
 
 var mymap = {
   framed : [
     // framed
-    {prettyurl:"/", resource:"/framed/intro.html"},
-    {prettyurl:"/intro", resource:"/framed/intro.html"},
-    {prettyurl:"/skills", resource:"/framed/skills.html"},
-    {prettyurl:"/programming", resource:"/framed/programming.html"},
-    {prettyurl:"/publications", resource:"/framed/publications.html"},
-    {prettyurl:"/cv", resource:"/framed/cv.html"}
+    {prettyurl:"/", resource:"./framed/intro.html"},
+    {prettyurl:"/intro", resource:"./framed/intro.html"},
+    {prettyurl:"/skills", resource:"./framed/skills.html"},
+    {prettyurl:"/programming", resource:"./framed/programming.html"},
+    {prettyurl:"/publications", resource:"./framed/publications.html"},
+    {prettyurl:"/cv", resource:"./framed/cv.html"}
   ],
   unframed : [
-    {prettyurl:"/rotatingtable", resource:"/rotatingtable.html"}
+    {prettyurl:"/rotatingtable", resource:"./rotatingtable.html"}
   ],
   idx: idx
 }
@@ -34,6 +29,27 @@ function idx(url,arrayname,urltype) {
   return false
 }
 
+function respond(code, body, response) {
+  // if (!type) type = "text/plain";
+  response.writeHead(code);
+  if (body && body.pipe)
+    body.pipe(response);
+  else
+    response.end(body);
+}
+
+myget = function(path, respond, response) {
+  fs.stat(path, function(error, stats) {
+    if (error && error.code == "ENOENT")
+      respond(404, "File not found", response);
+    else if (error)
+      respond(500, error.toString());
+    else
+      respond(200, fs.createReadStream(path), response)
+              // require("mime").lookup(path));
+  });
+};
+
 http.createServer(function(request, response) {
   var path = require("url").parse(request.url).pathname;
   // requested is a framed page via pretty url
@@ -43,28 +59,12 @@ http.createServer(function(request, response) {
     //   fileServer(request, response);
     // } else {
     // console.log("requested is a framed page directly via resource")
-        request.url = "/framed/frame.html";
-        fileServer(request, response);    //AJAX - don't rebuild the frame
-    // if (request.headers["x-requested-with"] == 'XMLHttpRequest') {
-    //   fileServer(request, response);
-    // } else {
-    console.log("requested is a framed page directly via resource")
-        request.url = "/framed/frame.html";
-        fileServer(request, response);
+        console.log(obj.resource)
+        myget(obj.resource,respond, response)
   }
-  // requested is a framed page directly via resource
-  else if (obj=mymap.idx(path, "framed", "resource")) {
-
-    // }
-    // response.write("<h1>SUBDIRREQUEST</h1>"+
-    // "<p>request.url <code>" + request.url + "</p>"+
-    // "<p>path  <code>" + path + "</p>"+
-    // "<p>obj.url  <code>" + obj.prettyurl + "</p>"+
-    // "<p>obj.resource  <code>" + obj.resource + "</p>");
-    // response.end();
-  }
-  else // 404?
-    fileServer(request, response);
+  // else if (obj=mymap.idx(path, "framed", "resource"))
+  else
+    respond(404, "File not found", response);
 
 }).listen(8080);
 
