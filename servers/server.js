@@ -2,6 +2,8 @@
 
 var http = require("http");
 var fs = require("fs")
+var mustache = require('mustache');
+// var fs = require("moustache")
 
 var mymap = {
   framed : [
@@ -50,22 +52,35 @@ myget = function(path, respond, response) {
   });
 };
 
+
 http.createServer(function(request, response) {
   var path = require("url").parse(request.url).pathname;
   // requested is a framed page via pretty url
   if (obj=mymap.idx(path, "framed", "prettyurl")) {
     //AJAX - don't rebuild the frame
     // if (request.headers["x-requested-with"] == 'XMLHttpRequest') {
-    //   fileServer(request, response);
+    //    console.log(obj.resource)
+    //    myget(obj.resource,respond, response)
     // } else {
     // console.log("requested is a framed page directly via resource")
-        console.log(obj.resource)
-        myget(obj.resource,respond, response)
+    console.log('calling readFile '+obj.resource);
+    fs.readFile(obj.resource, 'utf8', function(err,data_content) {
+      if (err) throw err;
+      console.log('calling readFile /framed/frame.html');
+      fs.readFile('./framed/frame.html', 'utf8', function(err,data_frame) {
+        var rendered = mustache.render(data_frame, {content: data_content});
+        console.log(rendered)
+        respond(200, rendered, response)
+      });
+    });
   }
   // else if (obj=mymap.idx(path, "framed", "resource"))
-  else
-    respond(404, "File not found", response);
-
+  else {
+    // for css and png ??
+    console.log(path)
+    myget('./'+path, respond, response)
+    //respond(404, "File not found", response);
+  }
 }).listen(8080);
 
 
