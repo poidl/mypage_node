@@ -58,26 +58,28 @@ http.createServer(function(request, response) {
   // requested is a framed page via pretty url
   if (obj=mymap.idx(path, "framed", "prettyurl")) {
     //AJAX - don't rebuild the frame
-    // if (request.headers["x-requested-with"] == 'XMLHttpRequest') {
-    //    console.log(obj.resource)
-    //    myget(obj.resource,respond, response)
-    // } else {
-    // console.log("requested is a framed page directly via resource")
-    console.log('calling readFile '+obj.resource);
-    fs.readFile(obj.resource, 'utf8', function(err,data_content) {
-      if (err) throw err;
-      console.log('calling readFile /framed/frame.html');
-      fs.readFile('./framed/frame.html', 'utf8', function(err,data_frame) {
-        var rendered = mustache.render(data_frame, {content: data_content});
-        console.log(rendered)
-        respond(200, rendered, response)
+    console.log(request.headers)
+    if (request.headers["x-requested-with"] == 'XMLHttpRequest') {
+      console.log('AJAX request: '+obj.resource)
+      myget(obj.resource,respond, response)
+    } else {
+      console.log('Framing: '+obj.resource)
+      // console.log('calling readFile '+obj.resource);
+      fs.readFile(obj.resource, 'utf8', function(err,data_content) {
+        if (err) throw err;
+        // console.log('calling readFile /framed/frame.html');
+        fs.readFile('./framed/frame.html', 'utf8', function(err,data_frame) {
+          var rendered = mustache.render(data_frame, {content: data_content});
+          // console.log(rendered)
+          respond(200, rendered, response)
+        });
       });
-    });
+    }
   }
   // else if (obj=mymap.idx(path, "framed", "resource"))
   else {
     // for css and png ??
-    console.log(path)
+    console.log('Direct: '+path)
     myget('./'+path, respond, response)
     //respond(404, "File not found", response);
   }

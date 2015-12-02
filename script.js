@@ -23,7 +23,7 @@ function navlink_clicked (e) {
     e.preventDefault();
     if (e.target.href != location.href) {
       swapMainwindow(e.target.href);
-      //console.log("pushState with: " + e.target.href);
+      console.log("pushState with: " + e.target.href);
       history.pushState(null, null, e.target.href);
     }
   }
@@ -40,7 +40,8 @@ function swapMainwindow(href) {
     }
   }
   // href is the url we want to appear on the address bar. e.g. "hoitaus.com/skills.html". but skills.html is in directory "content"
-  xhttp.open("GET", "content/" + href.split('/').pop(), true); // true: asynchronously
+  xhttp.open("GET", "/"+ href.split('/').pop(), true); // true: asynchronously
+  xhttp.setRequestHeader("x-requested-with",'XMLHttpRequest');
   xhttp.send();
   //setupHistoryClicks();
 }
@@ -94,3 +95,15 @@ var menuBtn = document.querySelector('.menu');
 menuBtn.addEventListener('click', function() {
   window.navdrawer_toggle();
 }, true);
+
+window.onload = function() {
+  // history.pushState(null, null, location.href + "intro.html");
+  window.addEventListener("popstate", doit, false);
+
+  function doit(e) {
+    //console.log('popstate fired!');
+    //console.log("location: " + document.location + ", state: " + JSON.stringify(event.state));
+    console.log("popped: " +location.href)
+    swapMainwindow(location.href);
+  }
+}
