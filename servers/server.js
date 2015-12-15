@@ -59,14 +59,15 @@ fs_stat_promise = function(path) {
         reject(error);
       else
         resolve(stats);
+      });
     });
-  });
   return promise;
 }
 
 mygetnew = function(path, respond, response) {
+  // TODO: stats is not used here
   fs_stat_promise(path).then( function(stats){
-      respond(200, fs.createReadStream(path), response)
+    respond(200, fs.createReadStream(path), response)
     })
     .catch( function(error) {
       response.writeHead(500);
@@ -75,39 +76,68 @@ mygetnew = function(path, respond, response) {
     });
 }
 
-// function respondTo(request) {
-//   var path = require("url").parse(request.url).pathname;
-//   // requested is a framed page via pretty url
-//   if (obj=mymap.idx(path, "framed", "prettyurl")) {
-//     //AJAX - don't rebuild the frame
-//     // console.log(request.headers)
-//     if (request.headers["x-requested-with"] == 'XMLHttpRequest') {
-//       // console.log('AJAX request: '+obj.resource)
-//       return fs_stat_promise(path).then( function(stats){
-//         respond(200, fs.createReadStream(path), response)
-//       })
-//     } else {
-//       // console.log('Framing: '+obj.resource)
-//       // console.log('calling readFile '+obj.resource);
-//       fs.readFile(obj.resource, 'utf8', function(err,data_content) {
-//         if (err) throw err;
-//         // console.log('calling readFile /framed/frame.html');
-//         fs.readFile('./framed/frame.html', 'utf8', function(err,data_frame) {
-//           var rendered = mustache.render(data_frame, {content: data_content});
-//           // console.log(rendered)
-//           respond(200, rendered, response)
-//         });
-//       });
-//     }
-//   }
-//   // else if (obj=mymap.idx(path, "framed", "resource"))
-//   else {
-//     // for css and png ??
-//     console.log('Direct: '+path)
-//     mygetnew('./'+path, respond, response)
-//     //respond(404, "File not found", response);
-//   }
+fs_readFile_promise = function(file) {
+  console.log('file: '+file)
+  var promise = new Promise( function(resolve, reject) {
+    fs.readFile(file, 'utf8', function(error, data) {
+      if (error) {
+        //TODO: log error
+        console.log('Error in fs_readFile_promise: '+error.toString());
+        reject(error);
+      } else {
+        console.log('reading data of file '+file)
+        resolve(data);
+      }
+      });
+    });
+  return promise;
+}
+
+framing_promise = function(content, frame) {
+  var promise = new Promise( function(resolve, reject) {
+    console.log('moustache')
+    var rendered = mustache.render(frame, {content: content});
+    console.log('rendered: '+rendered)
+    //TODO: !rendered valid?
+    if (!rendered)
+      reject(error);
+    else
+      resolve(rendered);
+    });
+  return promise;
+}
+
+// myrender = function(file) {
+//   console.log('myrender 1')
+//   var a= fs_readFile_promise(file).then( function(content) {
+//     console.log('myrender 2')
+//     return fs_readFile_promise('./framed/frame.html');
+//   }).then( function(frame) {
+//     console.log('myrender 3')
+//     console.log(frame)
+//     console.log(content)
+//
+//     return framing_promise(content,frame);
+//   });
+//   //.catch(function(error){ console.log('hoitaus')});
 // }
+
+myrender = function(file) {
+  // http://stackoverflow.com/questions/28250680/how-do-i-access-previous-promise-results-in-a-then-chain
+  console.log('myrender 1')
+  var a= fs_readFile_promise(file);
+  var b= a.then( function(content) {
+    console.log('myrender 2')
+    return fs_readFile_promise('./framed/frame.html');
+  });
+
+  return Promise.all([a, b]).spread(function(content, frame) {
+        // more processing
+        return framing_promise(content,frame);
+    });
+  //.catch(function(error){ console.log('hoitaus')});
+}
+
 
 http.createServer(function(request, response) {
   var path = require("url").parse(request.url).pathname;
@@ -121,15 +151,18 @@ http.createServer(function(request, response) {
     } else {
       // console.log('Framing: '+obj.resource)
       // console.log('calling readFile '+obj.resource);
-      fs.readFile(obj.resource, 'utf8', function(err,data_content) {
-        if (err) throw err;
-        // console.log('calling readFile /framed/frame.html');
-        fs.readFile('./framed/frame.html', 'utf8', function(err,data_frame) {
-          var rendered = mustache.render(data_frame, {content: data_content});
-          // console.log(rendered)
-          respond(200, rendered, response)
-        });
-      });
+      // fs.readFile(obj.resource, 'utf8', function(err,data_content) {
+      //   if (err) throw err;
+      //   // console.log('calling readFile /framed/frame.html');
+      //   fs.readFile('./framed/frame.html', 'utf8', function(err,data_frame) {
+      //     var rendered = mustache.render(data_frame, {content: data_content});
+      //     // console.log(rendered)
+        myrender(obj.resource).then( function(data) {
+          console.log('rendered...')
+          respond(200, data, response)
+        }).catch( function(error) {
+          console.log('Brrrrrrrr Error')
+        })
     }
   }
   // else if (obj=mymap.idx(path, "framed", "resource"))
