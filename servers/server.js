@@ -22,10 +22,11 @@ var mymap = {
 }
 
 // operates on map
-function idx(url,arrayname,urltype) {
-  for (i = 0; i < this[arrayname].length; i++) {
-    if (this[arrayname][i][urltype] == url) {
-      return this[arrayname][i]
+// url: requested url      pagetype: framed or unframed    urltype: pretty or direct resource
+function idx(url,pagetype,urltype) {
+  for (i = 0; i < this[pagetype].length; i++) {
+    if (this[pagetype][i][urltype] == url) {
+      return this[pagetype][i]
     }
   }
   return false
@@ -40,18 +41,6 @@ function respond(code, body, response) {
     response.end(body);
 }
 
-// myget = function(path, respond, response) {
-//   fs.stat(path, function(error, stats) {
-//     if (error && error.code == "ENOENT")
-//       respond(404, "File not found", response);
-//     else if (error)
-//       respond(500, error.toString(),response);
-//     else
-//       respond(200, fs.createReadStream(path), response)
-//               // require("mime").lookup(path));
-//   });
-// };
-
 fs_stat_promise = function(path) {
   var promise = new Promise( function(resolve, reject) {
     fs.stat(path, function(error, stats) {
@@ -59,20 +48,20 @@ fs_stat_promise = function(path) {
         reject(error);
       else
         resolve(stats);
-      });
     });
+  });
   return promise;
 }
 
 mygetnew = function(path, respond, response) {
   // TODO: stats is not used here
   fs_stat_promise(path).then( function(stats){
-    respond(200, fs.createReadStream(path), response)
+      respond(200, fs.createReadStream(path), response)
     })
     .catch( function(error) {
-      response.writeHead(500);
-      response.end(error.toString());
-      console.log("Response failed: ", error.stack);
+      response.writeHead(404);
+      response.end('File not found');
+      console.log("From mygetnew: Response failed: ", error.stack);
     });
 }
 
@@ -93,10 +82,10 @@ fs_readFile_promise = function(file) {
   return promise;
 }
 
-framing_promise = function(content, frame) {
+framing_promise = function(myarray) {
   var promise = new Promise( function(resolve, reject) {
     console.log('moustache')
-    var rendered = mustache.render(frame, {content: content});
+    var rendered = mustache.render(myarray[0], {content: myarray[1]});
     console.log('rendered: '+rendered)
     //TODO: !rendered valid?
     if (!rendered)
@@ -107,33 +96,14 @@ framing_promise = function(content, frame) {
   return promise;
 }
 
-// myrender = function(file) {
-//   console.log('myrender 1')
-//   var a= fs_readFile_promise(file).then( function(content) {
-//     console.log('myrender 2')
-//     return fs_readFile_promise('./framed/frame.html');
-//   }).then( function(frame) {
-//     console.log('myrender 3')
-//     console.log(frame)
-//     console.log(content)
-//
-//     return framing_promise(content,frame);
-//   });
-//   //.catch(function(error){ console.log('hoitaus')});
-// }
-
 myrender = function(file) {
   // http://stackoverflow.com/questions/28250680/how-do-i-access-previous-promise-results-in-a-then-chain
   console.log('myrender 1')
-  var a= fs_readFile_promise(file);
-  var b= a.then( function(content) {
-    console.log('myrender 2')
-    return fs_readFile_promise('./framed/frame.html');
-  });
+  var a= fs_readFile_promise('./framed/frame.html');
+  var b= fs_readFile_promise(file);
 
-  return Promise.all([a, b]).spread(function(content, frame) {
-        // more processing
-        return framing_promise(content,frame);
+  return Promise.all([a, b]).then(function(myarray) {
+        return framing_promise(myarray);
     });
   //.catch(function(error){ console.log('hoitaus')});
 }
@@ -141,31 +111,23 @@ myrender = function(file) {
 
 http.createServer(function(request, response) {
   var path = require("url").parse(request.url).pathname;
-  // requested is a framed page via pretty url
+  // requested a framed page via pretty url
   if (obj=mymap.idx(path, "framed", "prettyurl")) {
     //AJAX - don't rebuild the frame
-    // console.log(request.headers)
+    console.log('ajax')
     if (request.headers["x-requested-with"] == 'XMLHttpRequest') {
-      // console.log('AJAX request: '+obj.resource)
-      mygetnew(obj.resource,respond, response)
+      mygetnew(obj.resource,respond, response);
     } else {
-      // console.log('Framing: '+obj.resource)
-      // console.log('calling readFile '+obj.resource);
-      // fs.readFile(obj.resource, 'utf8', function(err,data_content) {
-      //   if (err) throw err;
-      //   // console.log('calling readFile /framed/frame.html');
-      //   fs.readFile('./framed/frame.html', 'utf8', function(err,data_frame) {
-      //     var rendered = mustache.render(data_frame, {content: data_content});
-      //     // console.log(rendered)
-        myrender(obj.resource).then( function(data) {
-          console.log('rendered...')
-          respond(200, data, response)
-        }).catch( function(error) {
-          console.log('Brrrrrrrr Error')
-        })
+      myrender(obj.resource).then( function(data) {
+        respond(200, data, response)
+      }).catch( function(error) {
+        response.writeHead(error.code);
+        response.end(error.toString());
+        console.log("Response failed: ", error.stack);
+      })
     }
   }
-  // else if (obj=mymap.idx(path, "framed", "resource"))
+  // requested is a framed page via pretty url
   else {
     // for css and png ??
     console.log('Direct: '+path)

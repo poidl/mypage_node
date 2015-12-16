@@ -35,6 +35,8 @@ function swapMainwindow(href) {
   var xhttp = new XMLHttpRequest();
   //console.log("swapMainwindow: "+href)
   xhttp.onreadystatechange = function() {
+    console.log(xhttp.readyState)
+    console.log(xhttp.status)
     if (xhttp.readyState == 4 && xhttp.status == 200) {
       document.getElementById("mainPanel").innerHTML = xhttp.responseText;
     }
