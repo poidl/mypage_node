@@ -21,6 +21,38 @@ var mymap = {
   idx: idx
 }
 
+var mymapnew = {
+  framed : [
+    // framed
+    {prettyurl:"/", resource:"./framed/intro.html"},
+    {prettyurl:"/intro", resource:"./framed/intro.html"},
+    {prettyurl:"/skills", resource:"./framed/skills.html"},
+    {prettyurl:"/programming", resource:"./framed/programming.html"},
+    {prettyurl:"/publications", resource:"./framed/publications.html"},
+    {prettyurl:"/cv", resource:"./framed/cv.html"}
+  ],
+  unframed : [
+    {prettyurl:"/rotatingtable", resource:"./rotatingtable.html"}
+  ],
+  idx: idx
+}
+
+pagetype = {'/':'framed',
+              '/intro':'framed',
+              '/skills':'framed',
+              '/programming':'framed',
+              '/publications':'framed',
+              '/cv':'framed',
+              '/rotatingtable':'unframed'};
+
+resources =   {'/':'./framed/intro.html',
+              '/intro':'./framed/intro.html',
+              '/skills':'./framed/skills.html',
+              '/programming':'./framed/programming.html',
+              '/publications':'./framed/publications.html',
+              '/cv':'./framed/cv.html',
+              '/rotatingtable':'./unframed/rotatingtable.html'};
+
 // operates on map
 // url: requested url      pagetype: framed or unframed    urltype: pretty or direct resource
 function idx(url,pagetype,urltype) {
@@ -112,13 +144,14 @@ myrender = function(file) {
 http.createServer(function(request, response) {
   var path = require("url").parse(request.url).pathname;
   // requested a framed page via pretty url
-  if (obj=mymap.idx(path, "framed", "prettyurl")) {
+  ptype =  pagetype[path];
+  resource = resources[path];
+  if (ptype==='framed') {
     //AJAX - don't rebuild the frame
-    console.log('ajax')
     if (request.headers["x-requested-with"] == 'XMLHttpRequest') {
-      mygetnew(obj.resource,respond, response);
+      mygetnew(resource,respond, response);
     } else {
-      myrender(obj.resource).then( function(data) {
+      myrender(resource).then( function(data) {
         respond(200, data, response)
       }).catch( function(error) {
         response.writeHead(error.code);
@@ -126,12 +159,13 @@ http.createServer(function(request, response) {
         console.log("Response failed: ", error.stack);
       })
     }
-  }
-  // requested is a framed page via pretty url
-  else {
+  // requested is an unframed page via pretty url
+  } else if (ptype==='unframed'){
+    mygetnew(resource, respond, response)
+  // requested is a non-pretty url
+  } else {
     // for css and png ??
     console.log('Direct: '+path)
     mygetnew('./'+path, respond, response)
-    //respond(404, "File not found", response);
   }
 }).listen(8080);
